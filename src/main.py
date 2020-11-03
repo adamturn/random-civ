@@ -3,7 +3,8 @@
 
 # standard library
 import re
-# third-party
+import random
+# conda repo
 import requests
 import pandas as pd
 import lxml.html as lh
@@ -36,7 +37,18 @@ def main():
         data.append(tuple(pair))
 
     df = pd.DataFrame(data, columns=cols)
+
     breakpoint()
+
+    while True:
+        n = input("[user] n = ")
+        for _ in range(int(n)):
+            civ = random.choice(data)
+            print(f"{civ[0]} ({civ[1]})")
+        cont = input("Continue? [y]/n: ")
+        breakpoint()
+        if cont == 'n' or 'q':
+            break
 
     return None
 
