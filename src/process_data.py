@@ -24,7 +24,7 @@ class Wrangler(object):
         return data, civs, leaders
 
     @staticmethod
-    def __write_to_file(records, data_dir):
+    def __write_records(records, data_dir):
         if not os.path.exists(data_dir):
             os.mkdir(data_dir)
         write_path = str(data_dir / "records.csv")
@@ -37,7 +37,7 @@ class Wrangler(object):
     @staticmethod
     def read_records(data_dir):
         file_path = str(data_dir / "records.csv")
-        print(f"Reading records at {file_path}")
+        print(f"Reading data from {file_path}")
         try:
             df = pd.read_csv(file_path)
         except FileNotFoundError as e:
@@ -67,6 +67,6 @@ class Wrangler(object):
                     civs.append(str(data[i]))
 
         records = [(leader, civ) for leader, civ in zip(leaders, civs)]
-        Wrangler.__write_to_file(records, data_dir)
+        Wrangler.__write_records(records, data_dir)
 
         return records
