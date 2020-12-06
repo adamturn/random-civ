@@ -1,57 +1,54 @@
-# Python 3.8.5 64-bit ('civ': conda)
-# Author: Adam Turner <turner.adch@gmail.com>
+"""
+Python 3.7
+Author: Adam Turner <turner.adch@gmail.com>
+"""
 
 # standard library
-import re
+import sys
 import random
-# conda repo
-import requests
-import pandas as pd
-import lxml.html as lh
+import pathlib
+# local modules
+from spider import Spider
+from process_data import Wrangler
 
 
-def main():
+def update(data_dir):
+    print("Crawling...")
     url = 'https://civilization.fandom.com/wiki/Leaders_(Civ6)'
-    page = requests.get(url)
-    doc = lh.fromstring(page.content)
-    rows = doc.xpath('//tr')
-    rows = [row for row in rows if len(row) == 4]
-    header = rows[0]
-    rows = rows[1:]
+    response = Spider.crawl(url)
 
-    # first two columns of data: Leader, Civ
-    cols = list()
-    for i in range(2):
-        element = header[i].text_content().strip()
-        cols.append(element)
-    print(cols)
+    print("Processing html...")
+    records = Wrangler.process_html(response, data_dir)
 
-    regex = re.compile(r"\[\d{1,2}\]")
-    data = list()
-    for row in rows:
-        pair = list()
-        for i in range(2):
-            content = row[i].text_content().strip()
-            content = regex.sub("", content)
-            pair.append(content)
-        data.append(tuple(pair))
+    return records
 
-    df = pd.DataFrame(data, columns=cols)
+def main(data_dir, records=False):
+    if not records:
+        records = Wrangler.read_records(data_dir)
 
-    breakpoint()
+    loop = True
+    while loop:
+        n = input("Select how many Civs? n = ")
+        for i in range(int(n)):
+            record = random.choice(records)
+            print(f"{i+1}. {record[0]} ({record[1]})")
 
-    while True:
-        n = input("[user] n = ")
-        for _ in range(int(n)):
-            civ = random.choice(data)
-            print(f"{civ[0]} ({civ[1]})")
-        cont = input("Continue? [y]/n: ")
-        breakpoint()
-        if cont == 'n' or 'q':
-            break
+        answer = input("\nTry again? [y]/n: ")
+        if answer in ("n", "q"):
+            loop = False
+            print("Exiting program...")
+        else:
+            continue
 
     return None
 
 
 if __name__ == "__main__":
-    main()
+    src_dir = pathlib.Path(__file__).parent.absolute()
+    data_dir = src_dir.parent / "data"
+
+    if sys.argv[-1] == "update":
+        print("Updating data...")
+        main(data_dir, records=update(data_dir))
+    else:
+        main(data_dir)
