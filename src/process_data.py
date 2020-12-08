@@ -62,9 +62,9 @@ class Wrangler(object):
         else:
             for i in range(len(data)):
                 if (i % 2) == 0:
-                    leaders.append(str(data[i]))
+                    leaders.append(data[i])
                 else:
-                    civs.append(str(data[i]))
+                    civs.append(data[i])
 
         records = [(leader, civ) for leader, civ in zip(leaders, civs)]
         Wrangler.__write_records(records, data_dir)
