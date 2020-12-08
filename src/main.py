@@ -29,7 +29,7 @@ def main(data_dir, records=False):
 
     loop = True
     while loop:
-        n = int(input("Select how many Civs? n = "))
+        n = int(input("\nSelect how many Civs? n = "))
         for i in range(n):
             record = random.choice(records)
             print(f"{i+1}. {record[0]} ({record[1]})")
