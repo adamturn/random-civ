@@ -1,7 +1,10 @@
-FROM python:3.7
+FROM python:3.6
+
 COPY requirements.txt /app/requirements.txt
-WORKDIR /app
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r /app/requirements.txt
+
 COPY src /app/src
-CMD ["python", "/app/src/main.py", "update"]
+
+CMD [ "python", "/app/src/main.py", "update" ]
